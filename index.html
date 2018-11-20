@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>rajephon lab - 니팔자야 최면 짤 생성기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/earlyaccess/nanummyeongjo.css" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<style type="text/css">
+.row {
+    margin-top:10px;
+}
+#mainCanvas {
+    max-width: 100%;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="/npjy">니팔자야 최면 짤 생성기</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="row">
+            <canvas id="mainCanvas" width="640" height="360"></canvas>
+        </div>
+        <form>
+            <div class="form-group row">
+                <label for="inputSubject" class="col-sm-2 col-form-label">좋은거</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" id="inputSubject" placeholder="나는 ㅁㅁ이(가) 너무 좋다." value="시공">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="inputSubject" class="col-sm-2 col-form-label">최면</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" id="inputHow" placeholder="자꾸자꾸 ㅁㅁ고 싶다." value="하">
+                </div>
+            </div>
+            <button class="btn btn-primary" id="btnDownload">짤 다운로드</button>
+        </form>
+    </div>
+<script>
+    let FONT_MYEONGJO = "20pt serif";
+    let BG_IMAGE_PATH = "./nipaljaya.jpg";
+    var mainCanvas = document.getElementById("mainCanvas");
+    let ctx = mainCanvas.getContext("2d");
+
+    let hasJong = (string) => {
+        // string의 마지막 글자가 받침을 가지는지 확인
+        // from: https://github.com/e-/Josa.js/blob/master/josa.js
+        string = string.charCodeAt(string.length - 1);
+        return (string - 0xac00) % 28 > 0;
+    };
+
+    let drawStroked = (text, x, y) => {
+        ctx.fillStyle = "white";
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0; 
+        ctx.shadowBlur = 10;
+        ctx.textBaseline = 'alphabetic';
+        ctx.scale(1,1);
+        ctx.strokeStyle = '#222';
+        ctx.strokeText(text, x, y);
+        ctx.fillStyle = 'white';
+        ctx.fillText(text, x, y);
+    };
+
+    let applyZzal = () => {
+        ctx.shadowColor = "#000000";
+        ctx.drawImage(bgImage, 0, 0);
+        ctx.textAlign="center"; 
+        let pos = {
+            x : 320,
+            y : 300
+        };
+
+        let subject = $('#inputSubject').val();
+        let how = $('#inputHow').val();
+        let iga = hasJong(subject) ? '이' : '가';
+        drawStroked("나는 " + subject + iga + " 너무 좋다.", pos.x, pos.y);
+        drawStroked("자꾸자꾸 " + how + "고 싶다.", pos.x, pos.y + 40);
+    };
+
+    let bgImage = new Image();
+    bgImage.onload = function() {
+        applyZzal('시공', '하');
+    };
+    bgImage.src = BG_IMAGE_PATH;
+    ctx.shadowColor = "transparent";
+    ctx.font = FONT_MYEONGJO;
+    ctx.lineWidth = 6;
+
+    $(function() {
+        $('#inputSubject, #inputHow').keyup(function(e) {
+            applyZzal();
+        });
+        $('#btnDownload').click(function(){
+            // event.preventDefault();
+            var href = mainCanvas.toDataURL();
+            this.href = href;
+            this.download = "npjy.png";
+        });
+    });
+    if (navigator.userAgent.indexOf('Twitter') !== -1) {
+        $('.messageArea').html('트위터 앱에서는 이미지 저장이 불가합니다.<br>웹 브라우저(사파리, 크롬, 등)으로 다시 접속해주세요.');
+    }
+</script>
+</body>
+</html>
